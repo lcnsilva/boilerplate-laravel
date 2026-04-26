@@ -3,13 +3,14 @@
 namespace App\Repositories;
 
 use App\Models\Item;
+use Illuminate\Database\Eloquent\Collection;
 
 class ItemRepository
 {
     /**
      * Create a new class instance.
      */
-    public function getAll(): array
+    public function getAll(): Collection
     {
         return Item::query()->orderByDesc('id')->get();
     }
