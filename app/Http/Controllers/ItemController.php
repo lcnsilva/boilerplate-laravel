@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ItemRequest;
 use App\Services\ItemService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 
 class ItemController extends Controller
@@ -23,25 +24,60 @@ class ItemController extends Controller
 
     public function listById(int $id): JsonResponse
 	{
-		return response()->json($this->itemService->get($id));
+		try {
+			$item = $this->itemService->get($id);
+			return response()->json([
+				'item' => $item
+			], 200);
+		} catch (Exception $e) {
+			return response()->json([
+				'error' => $e->getMessage(),
+			], 500);
+		};
 	}
 
 	public function store(ItemRequest $request): JsonResponse
 	{
-		$item = $this->itemService->create($request->validated());
-		return response()->json($item, 201);
+		try {
+			$item = $this->itemService->create($request->validated());
+			return response()->json([
+				'message' => 'Item criado com sucesso.',
+				'item' => $item
+			], 201);
+		} catch (Exception $e) {
+			return response()->json([
+				'error' => $e->getMessage(),
+			], 500);
+		};
 	}
 
 	public function update(ItemRequest $request, int $id): JsonResponse
 	{
-		$item = $this->itemService->update($id, $request->validated());
-		return response()->json($item);
+		try {
+			$item = $this->itemService->update($id, $request->validated());
+			return response()->json([
+				'message' => 'Item atualizado com sucesso.',
+				'item' => $item
+			], 200);
+		} catch (Exception $e) {
+			return response()->json([
+				'error' => $e->getMessage(),
+			], 500);
+		};
 	}
 
 	public function destroy(int $id): JsonResponse
 	{
-		$this->itemService->delete($id);
-		return response()->json(status: 204);
+		try {
+			$this->itemService->delete($id);
+			return response()->json([
+				'message' => 'Item excluído com sucesso.'
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'error' => $e->getMessage(),
+			], 500);
+		};
 	}
 
 }
